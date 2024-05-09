@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder</title>
+    <style>
+        #loadingText { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Resume Builder</h1>
+    
+    <!-- Form for uploading PDF file -->
+    <form id="pdfForm" enctype="multipart/form-data" onsubmit="event.preventDefault(); uploadPDF();">
+        <label for="pdfFile">Upload PDF File:</label><br>
+        <input type="file" id="pdfFile" name="pdfFile"><br><br>
+        <button type="submit" id="uploadButton">Generate Resume</button>
+    </form>
+    <p id="pdfUploadStatus"></p>
+
+    <!-- Form for generating resume -->
+    <form id="resumeForm" onsubmit="event.preventDefault(); submitData();">
+        <label for="jobDescription">Job Description:</label><br>
+        <textarea id="jobDescription" name="jobDescription" rows="4" cols="50"></textarea><br><br>
+        <label for="cvDetails">CV Details:</label><br>
+        <textarea id="cvDetails" name="cvDetails" rows="4" cols="50"></textarea><br><br>
+        <button type="submit" id="submitButton">Generate Resume</button>
+    </form>
+    <p id="loadingText">Generating your resume, please wait...</p>
+
+    <h2>Generated Resume:</h2>
+    <div id="generatedResume"></div>
+
+    <script>
+ function uploadPDF() {
+    const pdfFile = document.getElementById('pdfFile').files[0];
+    const uploadButton = document.getElementById('uploadButton');
+    const pdfUploadStatus = document.getElementById('pdfUploadStatus');
+
+    if (!pdfFile) {
+        console.error('No PDF file selected.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('pdfFile', pdfFile);
+
+    // Disable the button and show upload status
+    uploadButton.disabled = true;
+    pdfUploadStatus.textContent = 'Uploading PDF file...';
+
+    fetch('http://localhost:3000/upload-pdf', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        pdfUploadStatus.textContent = 'PDF file uploaded successfully.';
+        console.log('PDF text:', data.pdfText);
+        // Update the CV details textarea with extracted text
+        // document.getElementById('cvDetails').value = data.pdfText;
+        document.getElementById('generatedResume').value = data.pdfText;
+    })
+    .catch(error => {
+        console.error('Error uploading PDF:', error);
+        pdfUploadStatus.textContent = 'Failed to upload PDF file.';
+    })
+    .finally(() => {
+        uploadButton.disabled = false;
+    });
+}
+
+
+    function submitData() {
+        const jobDescription = document.getElementById('jobDescription').value;
+        const cvDetails = document.getElementById('cvDetails').value;
+        const submitButton = document.getElementById('submitButton');
+        const loadingText = document.getElementById('loadingText');
+
+        // Disable the button and show loading text
+        submitButton.disabled = true;
+        loadingText.style.display = 'block';
+
+        fetch('http://localhost:3000/generate-resume', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ jobDescription, cvDetails })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display the generated resume below the heading
+            const generatedResumeContainer = document.getElementById('generatedResume');
+            generatedResumeContainer.innerHTML = '<h3>Generated Resume:</h3><p>' + data.resume + '</p>';
+            submitButton.disabled = false;
+            loadingText.style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const generatedResumeContainer = document.getElementById('generatedResume');
+            generatedResumeContainer.innerHTML = '<p>Failed to generate resume. Please try again.</p>';
+            submitButton.disabled = false;
+            loadingText.style.display = 'none';
+        });
+    }
+    </script>
+</body>
+</html>

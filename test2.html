@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder</title>
+    <style>
+        #loadingText { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Resume Builder</h1>
+    <form id="resumeForm" onsubmit="event.preventDefault(); submitData();">
+        <label for="jobDescription">Job Description:</label><br>
+        <textarea id="jobDescription" name="jobDescription" rows="4" cols="50"></textarea><br><br>
+        <label for="cvDetails">CV Details:</label><br>
+        <textarea id="cvDetails" name="cvDetails" rows="4" cols="50"></textarea><br><br>
+        <button type="submit" id="submitButton">Generate Resume</button>
+    </form>
+    <p id="loadingText">Generating your resume, please wait...</p>
+
+    <h2>Generated Resume:</h2>
+    <pre id="generatedResume"></pre>
+
+    <script>
+    function submitData() {
+        const jobDescription = document.getElementById('jobDescription').value;
+        const cvDetails = document.getElementById('cvDetails').value;
+        const submitButton = document.getElementById('submitButton');
+        const loadingText = document.getElementById('loadingText');
+
+        // Disable the button and show loading text
+        submitButton.disabled = true;
+        loadingText.style.display = 'block';
+
+        fetch('http://localhost:3000/generate-resume', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jobDescription, cvDetails })
+})
+
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('generatedResume').textContent = data.resume;
+            submitButton.disabled = false;
+            loadingText.style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('generatedResume').textContent = 'Failed to generate resume. Please try again.';
+            submitButton.disabled = false;
+            loadingText.style.display = 'none';
+        });
+    }
+    </script>
+</body>
+</html>
