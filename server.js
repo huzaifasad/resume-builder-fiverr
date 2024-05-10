@@ -14,7 +14,7 @@ app.use(cors({
   }));
 
 const PORT = process.env.PORT || 3000;
-
+const OPENAI_API_KEY-"sk-proj-DL9pVs8thZA0u5E7WE0tT3BlbkFJx23q8AGVZrmOOlYd7Cl6";
 // Multer configuration for handling file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
