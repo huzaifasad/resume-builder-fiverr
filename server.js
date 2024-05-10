@@ -7,7 +7,11 @@ const pdf = require('pdf-parse');
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: "*", // Update to your frontend URL
+    methods: ["POST", "GET","PUT","DELETE"],
+    credentials: true
+  }));
 
 const PORT = process.env.PORT || 3000;
 
