@@ -14,7 +14,6 @@ app.use(cors({
   }));
 
 const PORT = process.env.PORT || 3000;
-const OPENAI_API_KEY-"sk-proj-DL9pVs8thZA0u5E7WE0tT3BlbkFJx23q8AGVZrmOOlYd7Cl6";
 // Multer configuration for handling file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -44,7 +43,7 @@ app.post('/upload-pdf', upload.single('pdfFile'), async (req, res) => {
                 max_tokens: 500
             }, {
                 headers: {
-                    'Authorization': `Bearer ${OPENAI_API_KEY}`,
+                    'Authorization': `Bearer sk-proj-DL9pVs8thZA0u5E7WE0tT3BlbkFJx23q8AGVZrmOOlYd7Cl6`,
                     'Content-Type': 'application/json'
                 }
             });
