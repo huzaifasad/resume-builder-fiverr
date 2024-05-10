@@ -116,7 +116,7 @@ app.post('/generate-resume', async (req, res) => {
             max_tokens: 500
         }, {
             headers: {
-                'Authorization': `Bearer ${OPENAI_API_KEY}`,
+                'Authorization': `Bearer sk-proj-DL9pVs8thZA0u5E7WE0tT3BlbkFJx23q8AGVZrmOOlYd7Cl6`,
                 'Content-Type': 'application/json'
             }
         });
